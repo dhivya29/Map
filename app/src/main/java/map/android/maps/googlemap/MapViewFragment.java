@@ -1,5 +1,6 @@
 package map.android.maps.googlemap;
 
+import android.app.ProgressDialog;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,9 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import map.android.maps.BundleKeys;
+import map.android.maps.MainActivity;
 import map.android.maps.R;
 
 
@@ -41,9 +42,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
-
-
-        mMapView.onResume(); // needed to get the map to display immediately
+        mMapView.onResume();
 
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -93,6 +92,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
                     e.printStackTrace();
                 }
 
+
             }
         }
     }
@@ -110,6 +110,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public class LoadMap extends AsyncTask<String, Void, List<Address>> {
+        ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(getContext(),"Processing...",
+                    "Loading..Please wait");
+        }
+
 
         @Override
         protected List<Address> doInBackground(String... strings) {
@@ -118,11 +126,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         protected void onPostExecute(List<Address> AddressList) {
+            progressDialog.dismiss();
             if (AddressList != null && AddressList.size() > 0) {
                 Address address = AddressList.get(0);
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
                 mMap.addMarker(new MarkerOptions().position(latLng).title(String.valueOf(latLng)));
             }
         }

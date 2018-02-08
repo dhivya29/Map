@@ -3,14 +3,15 @@ package map.android.maps;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
 import map.android.maps.googlemap.MapViewFragment;
 
 public class MainActivity extends AppCompatActivity {
-   ArrayList<String> AddressArray=new ArrayList<>();
 
+      ArrayList<String> AddressArray=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
